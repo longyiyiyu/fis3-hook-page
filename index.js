@@ -16,7 +16,8 @@ module.exports = function(fis, opts) {
 
     if ((match = file.id.match(/^pages\/([^/]+)\/.+/)) &&
       match[1] &&
-      ~pageList.indexOf(match[1])) {
+      ~pageList.indexOf(match[1]) &&
+      (file.isHtmlLike || file.isJsLike)) {
       cnt = file.getContent();
       cnt = cnt.replace(/require\('(pages\/[^']*)'\)/g, function(str, p) {
         var s = fis.util(serverRoot, file.subpath);
