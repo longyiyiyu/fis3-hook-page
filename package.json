@@ -1,6 +1,6 @@
 {
   "name": "fis3-hook-page",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "a fis3 hook plugin for page framework",
   "main": "index.js",
   "scripts": {

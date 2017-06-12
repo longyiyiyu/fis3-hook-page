@@ -1,10 +1,20 @@
 var path = require('path');
-var SERVERROOT = '../imwebsvr/worker/m.ke.qq.com';
+var SERVERROOT = '../server/app';
+
+function defaultFilter(pageName, fileId) {
+  if (fileId === 'pages/' + pageName + '/actions') return true;
+  if (fileId === 'pages/' + pageName + '/data.page') return true;
+  if (fileId === 'pages/' + pageName + '/' + pageName) return true;
+  if (fileId.match(new RegExp('^pages\/' + pageName + '\/modules\/'))) return true;
+  
+  return false;
+}
 
 module.exports = function(fis, opts) {
   var root = fis.project.getProjectPath();
   var serverRoot = fis.util(root, opts.serverRoot || SERVERROOT);
   var pageList = opts.pageList;
+  var filter = opts.filter;
 
   if (!pageList || !pageList.length) {
     return;
@@ -13,11 +23,18 @@ module.exports = function(fis, opts) {
   fis.on('compile:postprocessor', function(file) {
     var match;
     var cnt;
+    var pageName;
 
     if ((match = file.id.match(/^pages\/([^/]+)\/.+/)) &&
-      match[1] &&
+      (pageName = match[1]) &&
       ~pageList.indexOf(match[1]) &&
       (file.isHtmlLike || file.isJsLike)) {
+
+      if (!defaultFilter(pageName, file.id) ||
+        filter && !filter(pageName, file.id)) {
+        return;
+      }
+
       cnt = file.getContent();
       cnt = cnt.replace(/require\('(pages\/[^']*)'\)/g, function(str, p) {
         var s = fis.util(serverRoot, file.subpath);
