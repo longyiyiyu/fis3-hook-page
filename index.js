@@ -48,7 +48,7 @@ module.exports = function(fis, opts) {
         cnt = cnt.replace(/^return/, 'module.exports =');
       }
 
-      fis.util.write(fis.util(serverRoot, file.subpath), cnt);
+      fis.util.write(fis.util(serverRoot, file.subpath.replace(/\.es6\.js$/, '.js')), cnt);
     }
   });
 };
